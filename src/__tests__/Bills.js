@@ -39,7 +39,7 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
-     describe("When I click on icon eye", () => {  // a terminer
+     describe("When I click on icon eye", () => { 
       test("Then the bill should display in a modal", () => {
 
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -61,7 +61,7 @@ describe("Given I am connected as an employee", () => {
         $.fn.modal = jest.fn();
 
         const iconEye = screen.getAllByTestId("icon-eye")[0]
-        console.log(billsContainer)
+        
         iconEye.addEventListener("click", (e) => handleClickIconEye(e.target))
         userEvent.click(iconEye)
         expect(handleClickIconEye).toHaveBeenCalled()

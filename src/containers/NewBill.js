@@ -36,10 +36,11 @@ export default class NewBill {
           }
         })
         .then(({fileUrl, key}) => {
-          console.log(fileUrl)
+          console.log("fileName",fileName)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
+          console.log(this.fileUrl)
         }).catch(error => console.error(error))
     } else {
       console.error("format d'image non accepté")
@@ -65,7 +66,7 @@ export default class NewBill {
     this.onNavigate(ROUTES_PATH['Bills'])
   }
 
-  // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
