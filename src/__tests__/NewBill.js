@@ -3,11 +3,14 @@
  */
 
 import { fireEvent, screen } from "@testing-library/dom"
+import userEvent from '@testing-library/user-event';
 import { ROUTES, ROUTES_PATH } from "../constants/routes"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { localStorageMock } from "../__mocks__/localStorage.js"
+import mockStore from "../__mocks__/store"
 
+jest.mock("../app/store", () => mockStore)
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -75,6 +78,39 @@ describe("Given I am connected as an employee", () => {
       
       expect(upDateBill).toHaveBeenCalledWith(bill);
       //then updatebill should have been called with bill parameter
+    })
+  })
+  describe("When I select a file", () => {
+    test("new bill proof should be posted", () => {
+      
+      jest.spyOn(mockStore, "bills")
+
+      const html = NewBillUI()
+      document.body.innerHTML = html
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+        email: "a@a"
+      }))
+  
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      const newBill = new NewBill({document, onNavigate, store : mockStore, localStorage : window.localStorage})
+      const handleChangeFile = jest.fn(newBill.handleChangeFile)
+      const fileInput = screen.getByTestId("file")
+
+      const file = new File(["foo"], "foo.png", {
+        type: "image/png",
+      });
+
+      fileInput.addEventListener("change", handleChangeFile)
+
+      userEvent.upload(fileInput, file)
+
+      expect(mockStore.bills).toHaveBeenCalled()
     })
   })
 })
