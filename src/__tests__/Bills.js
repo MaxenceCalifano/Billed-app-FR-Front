@@ -70,9 +70,12 @@ describe("Given I am connected as an employee", () => {
         expect(modale).toBeTruthy()
       })
     }) 
-   /*  test("getBills should return an array", () => {
+     test("fetches bills from mock API GET", async () => {
       jest.spyOn(mockStore, "bills")
-      console.log( mockStore.bills().list())
+
+      const billsContainer = new Bills({
+        document, onNavigate, store: mockStore, bills:bills, localStorage: window.localStorage
+      })
 
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
@@ -85,12 +88,12 @@ describe("Given I am connected as an employee", () => {
       router()
       window.onNavigate(ROUTES_PATH.Bills)
 
-      const billsContainer = new Bills({
-        document, onNavigate, store: mockStore.bills, bills:bills, localStorage: window.localStorage
-      })
-      console.log(billsContainer.getBills())
-      expect(billsContainer.getBills().toEqual(bills))
-    }) */
+      await waitFor(() => screen.getByTestId("tbody"))
+      const contentPending  = await screen.getByTestId("tbody")
+      expect(contentPending).toBeTruthy()
+
+    })
+    
 
   })
 })
