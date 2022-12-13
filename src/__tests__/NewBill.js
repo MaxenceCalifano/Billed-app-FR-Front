@@ -81,7 +81,7 @@ describe("Given I am connected as an employee", () => {
     })
   })
   describe("When I select a file", () => {
-    test("new bill proof should be posted", () => {
+    test("if the file is of correct type, a new bill proof should be posted", () => {
       
       jest.spyOn(mockStore, "bills")
 
@@ -111,6 +111,39 @@ describe("Given I am connected as an employee", () => {
       userEvent.upload(fileInput, file)
 
       expect(mockStore.bills).toHaveBeenCalled()
+    })
+    test("if the file is of wrong type, console error is returned", () => {
+      
+      jest.spyOn(mockStore, "bills")
+
+      const html = NewBillUI()
+      document.body.innerHTML = html
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+        email: "a@a"
+      }))
+  
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      const newBill = new NewBill({document, onNavigate, store : mockStore, localStorage : window.localStorage})
+      const handleChangeFile = jest.fn(newBill.handleChangeFile)
+      const fileInput = screen.getByTestId("file")
+
+      const file = new File(["foo"], "foo.txt", {
+        type: "text/plain",
+      });
+
+      fileInput.addEventListener("change", handleChangeFile)
+
+      userEvent.upload(fileInput, file)
+
+      const errorToTest = new Error("Format d'image non accepté")
+
+      expect(handleChangeFile).toHaveReturnedWith(errorToTest)
     })
   })
 })

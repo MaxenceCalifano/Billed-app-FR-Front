@@ -43,7 +43,8 @@ export default class NewBill {
           console.log(this.fileUrl)
         }).catch(error => console.error(error))
     } else {
-      console.error("format d'image non accepté")
+      console.error("Format d'image non accepté")
+      return new Error("Format d'image non accepté")
     }
   }
   handleSubmit = e => {
