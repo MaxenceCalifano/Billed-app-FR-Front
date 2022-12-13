@@ -11,6 +11,7 @@ import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store"
 import router from "../app/Router.js";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 
 jest.mock("../app/store", () => mockStore)
 
@@ -91,6 +92,30 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId("tbody"))
       const contentPending  = await screen.getByTestId("tbody")
       expect(contentPending).toBeTruthy()
+
+    })
+    test("if store is undefined get bills returns nothing", async () => {
+      jest.spyOn(mockStore, "bills")
+
+      const billsContainer = new Bills({
+        document, onNavigate, store: undefined, bills:bills, localStorage: window.localStorage
+      })
+
+      const getBills = jest.fn(billsContainer.getBills)
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+      
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.append(root)
+      router()
+      window.onNavigate(ROUTES_PATH.Bills)
+
+      getBills()
+      expect(getBills).toHaveReturnedWith(undefined)
 
     })
     describe("When an error occurs on API", () => {
